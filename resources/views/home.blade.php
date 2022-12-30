@@ -12,12 +12,15 @@
                     <div class="card">
                         <div class="row g-0">
                             <div class="col-md-4">
-                                <img src="{{ $post->image }}" class="img-fluid rounded-start" alt="{{ $post->title }}">
+                                <img 
+                                    src="{{ $post->image }}" 
+                                    class="img-fluid rounded-start" 
+                                    alt="{{ $post->title }}"
+                                >
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ $post->title }}</h5>
-                                    {{-- category with absolute position --}}
                                     <div class="position-absolute top-0 end-0 p-2">
                                         <span class="badge text-bg-secondary">{{ $post->category->name }}</span>
                                     </div>
