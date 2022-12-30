@@ -29,9 +29,8 @@ class HomeController extends Controller
      */
     function index()
     {
-        // articles with pagination
         // dd(Article::all());
-        $posts = Article::paginate(6);
+        $posts = Article::paginate(5);
         return view('home', [
             'posts' => $posts,
             'categories' => Category::all(),
@@ -53,7 +52,7 @@ class HomeController extends Controller
             'title' => 'required',
             'content' => 'required',
             'category_id' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required'
         ];
         $validator = Validator::make($request->all(), $rules);
 
@@ -65,23 +64,18 @@ class HomeController extends Controller
             ], 422);
         }
 
-
-        // upload image handler
-        $image = $request->file('image');
-        $imageName = time() . '.' . $image->getClientOriginalExtension();
-        $image->storeAs('public/images', $imageName);
-
         // create post
-        $post = Article::create([
+        Article::create([
             'title' => $request->title,
             'content' => $request->content,
             'category_id' => $request->category_id,
-            'image' => $imageName,
+            'image' => $request->image,
+            'status' => $request->status,
             'user_id' => Auth::user()->id,
         ]);
 
         // return redirect to home
-        return redirect()->route('home');
+        return redirect()->route('home')->with('success', 'Post created successfully');
     }
 
     function edit($id)
@@ -101,7 +95,7 @@ class HomeController extends Controller
             'title' => 'required',
             'content' => 'required',
             'category_id' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -114,35 +108,26 @@ class HomeController extends Controller
             ], 422);
         }
 
-        //check if image is not empty
-        if ($request->hasFile('image')) {
-            // upload image handler
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/images', $imageName);
-
-            // delete old image
-            Storage::delete('public/images/' . $post->image);
-
-            // update post
-            $post->update([
-                'title' => $request->title,
-                'content' => $request->content,
-                'category_id' => $request->category_id,
-                'image' => $imageName,
-                'user_id' => Auth::user()->id,
-            ]);
-        } else {
-            // update post
-            $post->update([
-                'title' => $request->title,
-                'content' => $request->content,
-                'category_id' => $request->category_id,
-                'user_id' => Auth::user()->id,
-            ]);
-        }
+        // update post
+        $post->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'category_id' => $request->category_id,
+            'image' => $request->image,
+            'status' => $request->status,
+            'user_id' => Auth::user()->id,
+        ]);
 
         // return redirect to home
-        return redirect()->route('home');
+        return redirect()->route('home')->with('success', 'Post updated successfully');
+    }
+
+    function destroy($id)
+    {
+        $post = Article::find($id);
+        $post->delete();
+
+        // return redirect to home
+        return redirect()->route('home')->with('success', 'Post deleted successfully');
     }
 }

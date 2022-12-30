@@ -19,7 +19,7 @@ class CreateArticlesTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('content');
-            $table->string('status');
+            $table->string('status')->default('inactive');
             $table->string('image');
             $table->foreignIdFor(Category::class);
             $table->foreignIdFor(User::class);

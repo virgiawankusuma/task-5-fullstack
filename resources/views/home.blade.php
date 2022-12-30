@@ -5,7 +5,18 @@
     <div class="row">
         <div class="col-12">
             <h1>Posts</h1>
+            <a href="/post/create" class="btn btn-primary">Add New Post</a>
             <hr>
+            @if (session()->has('success'))
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>    
+                    </div>
+                </div>
+            @endif
             <div class="row">
                 @foreach ($posts as $post)
                 <div class="col-12 col-md-6 my-3">
